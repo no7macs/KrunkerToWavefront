@@ -1,0 +1,1 @@
+{"name":"New Krunker Map","ambient":"#97a0a8","light":"#f2f8fc","sky":"#dce8ed","fog":"#8d9aa0","fogD":2000,"objects":[{"p":[0,0,0],"s":[10,15,10],"t":5}],"spawns":[]}
