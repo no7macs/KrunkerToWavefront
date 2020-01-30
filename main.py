@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import filedialog
 import os, shutil, time
 from subprocess import call
+from pathlib import Path
 
 filename = str()
 
@@ -11,44 +12,43 @@ def select_file():
     print(root.filename)
 
     root.currfile.config(text = "Current File Selected:" + root.filename)
-    root.filestatus.config(text = "File Status: Has Not Been Converted")
+    root.filestatus.config(text = "File Status: File Status: Has Not Been Converted")
 
 def save_location():
     root.savelocation = filedialog.askdirectory(initialdir = "./", title = "Select Save Location")
     root.savelocationtext.config(text = "Save Location Selected:" + root.savelocation)
 
 def convert():
+    converted_file_name = (os.path.splitext(root.savelocation + '/' + os.path.basename(root.filename))[0])
+    converted_file = Path(converted_file_name + '.obj')
+    print('--File name--: ' + converted_file_name)
+    print('--File getting used--:' + str(converted_file))
 
-    try:
-        with open(root.savelocation + os.path.basename(root.filename)) as f:
-            root.filestatus.config(text = "ERR. Duplicate File In Save Location")
-            root.mainloop()
-    except IOError:
-        root.filestatus.config(text = "Converting...")
-
-        programdir = os.path.dirname(os.path.abspath(__file__))
-        print(programdir)
-
-        if root.filename == str(""):
-            root.filestatus.config(text = "File Converted: ERR, No File Selected") 
-            root.mainloop()   
-        else:
-            shutil.copyfile(root.filename, programdir + "/repo/" + os.path.basename(root.filename))
-            os.chdir(programdir + "/repo")
-            print(os.getcwd())
-            os.system("node" " krunkerToWavefront.js " + os.path.basename(root.filename))
-            root.filestatus.config(text = "File Status: File Has Been Converted")
-
-            filecontent = []
-            filecontent = os.listdir("./wavefront")
-
-            for i in filecontent:
-                if i == ("textures"):
-                    pass
-                else: 
-                    os.rename("./wavefront/" + i , root.savelocation + "/" + i)
-            
-            os.remove(programdir + "/repo/" + os.path.basename(root.filename))
+    root.filestatus.config(text = "File Status: Converting...")
+    programdir = os.path.dirname(os.path.abspath(__file__))
+    print(programdir)
+    if root.filename == str(""):
+        root.filestatus.config(text = "File Status: ERR, No File Selected") 
+        root.mainloop()   
+    else:
+        shutil.copyfile(root.filename, programdir + "/repo/" + os.path.basename(root.filename))
+        os.chdir(programdir + "/repo")
+        print(os.getcwd())
+        os.system("node" " krunkerToWavefront.js " + os.path.basename(root.filename))
+        root.filestatus.config(text = "File Status: File Has Been Converted")
+        filecontent = []
+        filecontent = os.listdir("./wavefront")
+        for i in filecontent:
+            if i == ("textures"):
+                pass
+            else: 
+                try:
+                    os.rename(("./wavefront/" + i ), (root.savelocation + "/" + i))
+                    os.remove(programdir + "/repo/" + os.path.basename(root.filename))
+                except IOError:
+                    root.filestatus.config(text = "File Status: ERR. Duplicate File In Save Location")
+                    os.remove(programdir + "/repo/" + os.path.basename(root.filename))
+                    root.mainloop()
 
 if __name__ == "__main__":
     root = Tk()
