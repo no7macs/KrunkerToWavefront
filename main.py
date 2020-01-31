@@ -3,6 +3,7 @@ from tkinter import filedialog
 import os, shutil, time
 from subprocess import call
 from pathlib import Path
+import shutil
 
 filename = str()
 
@@ -41,10 +42,11 @@ def convert():
         for i in filecontent:
             if i == ("textures"):
                 pass
-            else: 
+            else:
                 try:
                     os.rename(("./wavefront/" + i ), (root.savelocation + "/" + i))
                     os.remove(programdir + "/repo/" + os.path.basename(root.filename))
+                    shutil.copyfile(("./wavefront/textures"), (root.savelocation + "/" + i))
                 except IOError:
                     root.filestatus.config(text = "File Status: ERR. Duplicate File In Save Location")
                     os.remove(programdir + "/repo/" + os.path.basename(root.filename))
